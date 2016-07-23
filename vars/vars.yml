@@ -1,0 +1,4 @@
+vm_user: VM_USER
+monitoring_server_ip: MONITORING_SERVER_IP
+remote_server_ip: REMOTE_SERVER_IP # this servers ip
+root_filesystem: ROOT_FILE_SYSTEM
