@@ -1,0 +1,45 @@
+---
+### This task file configures a remote host to allow it to be monitored
+- name: Check if nagios-plugins and nagios-nrpe-server are installed
+  command: bash -c "dpkg --get-selections | grep {{ item }}"
+  with_items:
+    - nagios-plugins
+    - nagios-nrpe-server
+  ignore_errors: true
+  register: nagios_installed
+  tags:
+    - nagios_setup
+
+- name: Install nagios-plugins and nagios-nrpe-server if uninstalled
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+    - nagios-plugins
+    - nagios-nrpe-server
+  when: nagios_installed|failed
+  tags:
+    - nagios_setup
+
+- name: Update NRPE configuration file allow our the monitoring host IP
+  lineinfile: 
+    dest: /etc/nagios/nrpe.cfg
+    state: present
+    regexp: "{{ item.reg }}"
+    line: "{{ item.line }}"
+    backrefs: yes
+  with_items:
+    - { reg: "^allowed_hosts=127.0.0.1$", line: "allowed_hosts=127.0.0.1,{{ monitoring_server_ip }}" }
+    - { reg: "^#server_address=127.0.0.1$", line: "server_address={{ remote_server_ip }}" }
+    - { reg: "^(.*)check_hda1(.*)$", line: "command[check_hda1]=/usr/lib/nagios/plugins/check_disk -w 20% -c 10% -p {{ root_filesystem }}" }
+  tags:
+    - update_nrpe
+
+- name: Restart NRPE
+  service: name=nagios-nrpe-server state=started
+  tags:
+    - update_nrpe
+
+
+
+
+
+
