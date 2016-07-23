@@ -24,10 +24,8 @@ When(/^I update NRPE configuration file$/) do
 end
 
 And(/^Nagios-nrpe-server should be running$/) do
-  cmd = "ssh -i '#{PATHTOKEY}' #{AWSPUBDNS} 'sudo service nagios-nrpe-server status'"
+  cmd = "ssh -i '#{PATHTOKEY}' #{PUBDNS} 'sudo service nagios-nrpe-server status'"
   output, error, status = Open3.capture3 "#{cmd}"
-  puts output
-  puts error
   expect(status.success?).to eq(true)
   expect(output).to match("nagios-nrpe is running")
 end
