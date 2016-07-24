@@ -30,6 +30,11 @@ Run the playbook:
 ```
 $ ansible-playbook playbook.remote-nagios.yml -i inventory.ini --private-key=path/to/private/key
 ```
+OR
+```
+$ cucumber features/install.feature
+```
+
 With that done you have set up a remote host which would is ready to be monitored by a Nagios Monitoring Server.
 
 **Issues**
